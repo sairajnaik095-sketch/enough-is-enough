@@ -36,6 +36,20 @@ export default function Events() {
       .catch(() => setLoading(false));
   }, []);
 
+  // 🔥 FILTER + SORT EVENTS
+  const filteredEvents = [...events]
+    .filter((event) => {
+      const eventDate = new Date(
+        event.start?.dateTime || event.start?.date
+      );
+      return eventDate >= new Date(); // only future events
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.start?.dateTime || a.start?.date);
+      const dateB = new Date(b.start?.dateTime || b.start?.date);
+      return dateA - dateB; // ascending
+    });
+
   return (
     <section
       id="events"
@@ -68,11 +82,11 @@ export default function Events() {
       {/* Events */}
       {loading ? (
         <p className="text-gray-500">Loading...</p>
-      ) : events.length === 0 ? (
-        <p className="text-gray-500">No events available</p>
+      ) : filteredEvents.length === 0 ? (
+        <p className="text-gray-500">No upcoming events</p>
       ) : (
         <div className="space-y-4">
-          {events.map((event, index) => {
+          {filteredEvents.map((event, index) => {
             const title =
               event.summary && event.summary.trim() !== ""
                 ? event.summary
@@ -126,7 +140,6 @@ export default function Events() {
                       {time}
                     </p>
 
-                    {/* 🔥 DESCRIPTION ADDED */}
                     <p className="text-sm text-gray-700 mt-2 max-w-md line-clamp-2 hover:line-clamp-none transition">
                       {description}
                     </p>
