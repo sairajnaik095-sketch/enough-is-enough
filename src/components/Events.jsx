@@ -7,7 +7,7 @@ export default function Events() {
   const sectionRef = useRef(null);
   const [visible, setVisible] = useState(false);
 
-  // 🔥 Scroll animation (works every time)
+  // 🔥 Scroll animation (re-trigger every scroll)
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -42,7 +42,7 @@ export default function Events() {
       ref={sectionRef}
       className="bg-[#f5f1e8] text-black py-24 px-6 md:px-24"
     >
-      {/* Small Label */}
+      {/* Label */}
       <p className="text-xs tracking-widest text-gray-500 mb-2">
         GET INVOLVED
       </p>
@@ -65,7 +65,7 @@ export default function Events() {
       {/* Divider */}
       <div className="border-t border-black/20 mb-6"></div>
 
-      {/* Events List */}
+      {/* Events */}
       {loading ? (
         <p className="text-gray-500">Loading...</p>
       ) : events.length === 0 ? (
@@ -77,6 +77,11 @@ export default function Events() {
               event.summary && event.summary.trim() !== ""
                 ? event.summary
                 : "Untitled Event";
+
+            const description =
+              event.description && event.description.trim() !== ""
+                ? event.description
+                : "No description available";
 
             const dateObj = new Date(
               event.start?.dateTime || event.start?.date
@@ -98,7 +103,7 @@ export default function Events() {
             return (
               <div
                 key={index}
-                className={`flex items-center justify-between border border-black/20 px-4 py-4 transition-all duration-500 hover:bg-black/5 ${
+                className={`flex flex-col md:flex-row md:items-center md:justify-between border border-black/20 px-4 py-5 transition-all duration-500 hover:bg-black/5 ${
                   visible
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
@@ -106,10 +111,9 @@ export default function Events() {
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 {/* LEFT */}
-                <div className="flex items-center gap-4">
-
+                <div className="flex gap-4">
                   {/* Date Box */}
-                  <div className="bg-yellow-400 text-black w-16 h-16 flex flex-col items-center justify-center font-bold">
+                  <div className="bg-yellow-400 text-black w-16 h-16 flex flex-col items-center justify-center font-bold shrink-0">
                     <span className="text-lg">{day}</span>
                     <span className="text-xs uppercase">{month}</span>
                   </div>
@@ -117,8 +121,14 @@ export default function Events() {
                   {/* Text */}
                   <div>
                     <h3 className="font-semibold text-lg">{title}</h3>
-                    <p className="text-sm text-gray-600">
+
+                    <p className="text-sm text-gray-600 mt-1">
                       {time}
+                    </p>
+
+                    {/* 🔥 DESCRIPTION ADDED */}
+                    <p className="text-sm text-gray-700 mt-2 max-w-md line-clamp-2 hover:line-clamp-none transition">
+                      {description}
                     </p>
                   </div>
                 </div>
@@ -128,9 +138,9 @@ export default function Events() {
                   href={event.htmlLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="border border-black px-4 py-2 text-sm hover:bg-black hover:text-white transition"
+                  className="mt-4 md:mt-0 border border-black px-4 py-2 text-sm hover:bg-black hover:text-white transition"
                 >
-                  Details
+                  Details →
                 </a>
               </div>
             );
